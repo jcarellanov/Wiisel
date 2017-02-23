@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Wiisel</string>
+   <string name="buttonDoctor">Doctor</string>
+    <string name="buttonPatient">Paciente</string>
+    <string name="doctorPassword">Contraseña</string>
+    <string name="doctorLogin">Usuario</string>
+
+</resources>
