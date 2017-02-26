@@ -16,6 +16,8 @@ import android.widget.Button;
 public class MainActivity extends AppCompatActivity {
     public Context context;
     int MY_PERMISSIONS_ACCESS_FINE = 1;
+    int MY_PERMISSIONS_CALL_PHONE=2;
+    int MY_PERMISSIONS_CALL_PRIVILEGED=3;
     private WifiManager mWifiManager;
     int REQUEST_ENABLE_BT = 2;
     private BluetoothAdapter mBluetoothAdapter;
@@ -30,8 +32,16 @@ public class MainActivity extends AppCompatActivity {
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                 MY_PERMISSIONS_ACCESS_FINE);
 
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.CALL_PHONE},
+                MY_PERMISSIONS_CALL_PHONE);
+
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.CALL_PRIVILEGED},
+                MY_PERMISSIONS_CALL_PRIVILEGED);
+
         mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        mWifiManager.setWifiEnabled(true);
+        //mWifiManager.setWifiEnabled(true);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         enableBluetoothOnDevice();
@@ -54,8 +64,10 @@ public class MainActivity extends AppCompatActivity {
         View.OnClickListener patientLogin = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent launchPatient = new Intent(context, PatientHome.class);
-                context.startActivity(launchPatient);
+                //Intent launchPatient = new Intent(context, PatientHome.class);
+                Intent launchPatient = new Intent(MainActivity.this,PatientHome.class);
+                //context.startActivity(launchPatient);
+                startActivity(launchPatient);
             }
         };
 

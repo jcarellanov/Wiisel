@@ -7,6 +7,9 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+
+
 
     <application
         android:allowBackup="true"
@@ -21,6 +24,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".PatientHome" />
+        <intent-filter>
+            <action android:name="android.intent.action.CALL_PRIVILEGED" />
+            <data android:scheme="tel" />
+        </intent-filter>
+
+        <activity android:name=".loginPage" />
     </application>
 
 </manifest>
