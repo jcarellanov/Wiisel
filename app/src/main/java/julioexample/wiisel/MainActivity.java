@@ -1,15 +1,19 @@
 package julioexample.wiisel;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,13 +48,21 @@ public class MainActivity extends AppCompatActivity {
                 MY_PERMISSIONS_CALL_PRIVILEGED);
 
         mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        if (!mWifiManager.isWifiEnabled())
-            enableWifiOnDevice();
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        boolean isMobileEnabled = networkInfo.getType()==ConnectivityManager.TYPE_MOBILE;
+//////activa BL, wifi o datos moviles
+        if (!mBluetoothAdapter.isEnabled())
+            enableBluetoothOnDevice();
+
+        if (!mWifiManager.isWifiEnabled() && !isMobileEnabled)
+          createNetErrorDialog();//crea una alerta para ir a los wifi settings
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        if (!mBluetoothAdapter.isEnabled())
-            enableBluetoothOnDevice();
+////////////////
+
 
         Button thisIsDoctor = (Button) findViewById(R.id.buttonDoctor);
         Button thisIsPatient = (Button) findViewById(R.id.buttonPatient);
@@ -58,8 +70,9 @@ public class MainActivity extends AppCompatActivity {
         View.OnClickListener doctorLogin = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                setContentView(R.layout.doctor_login);
+                //LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                Intent launchDoctorView = new Intent(MainActivity.this, loginPage.class);
+                startActivity(launchDoctorView);
 
 
             }
@@ -71,9 +84,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Intent launchPatient = new Intent(context, PatientHome.class);
-                Intent launchPatient = new Intent(MainActivity.this, PatientHome.class);
+                Intent launchPatientView = new Intent(MainActivity.this, PatientHome.class);
                 //context.startActivity(launchPatient);
-                startActivity(launchPatient);
+                startActivity(launchPatientView);
             }
         };
 
@@ -114,14 +127,47 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void enableWifiOnDevice(){
-        if(mWifiManager == null){
+    private void enableWifiOnDevice() {
+        if (mWifiManager == null) {
             Log.e(LOG_TAG, "This device does not support wifi");
             finish();
             // If the android device does not have wifi, just return and get out.
-            }
+        }
 
         mWifiManager.setWifiEnabled(true);
+    }
+
+    private void createNetErrorDialog() {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("You need a network connection to use this application. Please turn on mobile network or Wi-Fi in Settings.")
+                .setTitle("Unable to connect")
+                .setCancelable(false)
+                .setNeutralButton("WIFI",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                enableWifiOnDevice();
+                            }
+                        }
+                )
+                .setPositiveButton("Settings",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                enableWifiOnDevice();
+                                Intent i = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+                                startActivity(i);
+                            }
+                        }
+                )
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                MainActivity.this.finish();
+                            }
+                        }
+                );
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
 }

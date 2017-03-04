@@ -4,5 +4,6 @@
     <string name="buttonPatient">Paciente</string>
     <string name="doctorPassword">Contraseña</string>
     <string name="doctorLogin">Usuario</string>
+    <string name="okButton">OK</string>
     <string name="action_settings">Ajustes</string>
 </resources>

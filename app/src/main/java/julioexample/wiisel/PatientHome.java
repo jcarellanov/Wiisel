@@ -39,6 +39,7 @@ public class PatientHome extends Activity {
                             MY_PERMISSIONS_CALL_PHONE);
                     return;
 
+
                 }
             }
         };
