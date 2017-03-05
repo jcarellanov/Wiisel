@@ -5,5 +5,9 @@
     <string name="doctorPassword">Contraseña</string>
     <string name="doctorLogin">Usuario</string>
     <string name="okButton">OK</string>
-    <string name="action_settings">Ajustes</string>
+ <string name="WIFI">WIFI</string>
+ <string name="action_settings">Configuracion</string>
+ <string name="wireless_settings">Ajustes</string>
+ <string name="Cancel">Cancelar</string>
+ <string name="no_data">No hay conexión de datos</string>
 </resources>

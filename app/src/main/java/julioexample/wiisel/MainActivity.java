@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     int MY_PERMISSIONS_ACCESS_FINE = 1;
     int MY_PERMISSIONS_CALL_PHONE = 2;
     int MY_PERMISSIONS_CALL_PRIVILEGED = 3;
+    int MY_PERMISSIONS_ACCESS_NETWORK = 4;
     private WifiManager mWifiManager;
     int REQUEST_ENABLE_BT = 2;
     private BluetoothAdapter mBluetoothAdapter;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = MainActivity.this;
+        ////permission requests
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                 MY_PERMISSIONS_ACCESS_FINE);
@@ -43,23 +45,35 @@ public class MainActivity extends AppCompatActivity {
                 new String[]{Manifest.permission.CALL_PHONE},
                 MY_PERMISSIONS_CALL_PHONE);
 
-        ActivityCompat.requestPermissions(this,
+       /* ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.CALL_PRIVILEGED},
-                MY_PERMISSIONS_CALL_PRIVILEGED);
+                MY_PERMISSIONS_CALL_PRIVILEGED);*///needed?
+
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_NETWORK_STATE},
+                MY_PERMISSIONS_ACCESS_NETWORK);
+        ///end permission requests
+
+///// activate necessary networks
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (!mBluetoothAdapter.isEnabled())
+            enableBluetoothOnDevice();
 
         mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        boolean isMobileEnabled = networkInfo.getType()==ConnectivityManager.TYPE_MOBILE;
-//////activa BL, wifi o datos moviles
-        if (!mBluetoothAdapter.isEnabled())
-            enableBluetoothOnDevice();
+        boolean isMobileEnabled = false;
+        if (networkInfo != null) {
+            isMobileEnabled = networkInfo.getType() == ConnectivityManager.TYPE_MOBILE;
+        }
+
 
         if (!mWifiManager.isWifiEnabled() && !isMobileEnabled)
           createNetErrorDialog();//crea una alerta para ir a los wifi settings
 
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
 
 ////////////////
 
@@ -141,16 +155,16 @@ public class MainActivity extends AppCompatActivity {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("You need a network connection to use this application. Please turn on mobile network or Wi-Fi in Settings.")
-                .setTitle("Unable to connect")
+                .setTitle(R.string.no_data)
                 .setCancelable(false)
-                .setNeutralButton("WIFI",
+                .setNeutralButton(R.string.WIFI,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 enableWifiOnDevice();
                             }
                         }
                 )
-                .setPositiveButton("Settings",
+                .setPositiveButton(R.string.wireless_settings,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 enableWifiOnDevice();
@@ -159,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                 )
-                .setNegativeButton("Cancel",
+                .setNegativeButton(R.string.Cancel,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 MainActivity.this.finish();
